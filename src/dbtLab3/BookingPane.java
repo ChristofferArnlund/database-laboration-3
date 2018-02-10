@@ -1,10 +1,14 @@
 package dbtLab3;
 
+import dbtLab3.tables.Movie;
+import dbtLab3.tables.Show;
+
 import javax.swing.*;
 import javax.swing.event.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.LinkedList;
 
 /**
  * The GUI pane where a user books tickets for movie performances. It contains
@@ -69,6 +73,7 @@ public class BookingPane extends BasicPane {
 	 * The total number of fields.
 	 */
 	private static final int NBR_FIELDS = 4;
+	private LinkedList<Show> shows;
 
 	/**
 	 * Create the booking pane.
@@ -165,6 +170,7 @@ public class BookingPane extends BasicPane {
 		currentUserNameLabel.setText(CurrentUser.instance().getCurrentUserId());
 		fillNameList();
 		clearFields();
+		shows = new LinkedList<Show>();
 	}
 
 	/**
@@ -172,7 +178,11 @@ public class BookingPane extends BasicPane {
 	 */
 	private void fillNameList() {
 		nameListModel.removeAllElements();
-        /* --- insert own code here --- */
+		LinkedList<Movie> movies = (LinkedList<Movie>) db.getMovies();
+		for (Movie mov:movies){
+			nameListModel.addElement(mov.getMovie_name());
+		}
+
 	}
 
 	/**
@@ -197,9 +207,11 @@ public class BookingPane extends BasicPane {
 	 * A class that listens for clicks in the name list.
 	 */
 	class NameSelectionListener implements ListSelectionListener {
+		private LinkedList<Show> shows;
+
 		/**
 		 * Called when the user selects a name in the name list. Fetches
-		 * performance dates from the database and displays them in the date
+		 * SHOW dates from the database and displays them in the date
 		 * list.
 		 * 
 		 * @param e
@@ -209,8 +221,22 @@ public class BookingPane extends BasicPane {
 			if (nameList.isSelectionEmpty()) {
 				return;
 			}
+			dateListModel.clear();
 			String movieName = nameList.getSelectedValue();
 			/* --- insert own code here --- */
+
+			shows = (LinkedList<Show>) db.getShows();
+	
+			for(Show s : shows){
+				if(s.getMovie_name().equals(movieName)){
+
+					String d = s.getDate();
+					dateListModel.addElement(d);
+				}
+
+			}
+
+
 		}
 	}
 
@@ -232,7 +258,23 @@ public class BookingPane extends BasicPane {
 			}
 			String movieName = nameList.getSelectedValue();
 			String date = dateList.getSelectedValue();
-			/* --- insert own code here --- */
+
+
+			shows =  (LinkedList<Show>) db.getShows();
+			for(Show s : shows){
+				if(s.getDate().equals(date)){
+
+					fields[0].setText(s.getMovie_name());
+					fields[1].setText(s.getDate());
+					fields[2].setText(s.getTheater_name());
+					fields[3].setText(Integer.toString(s.getFree_seats()));
+
+
+				}
+
+			}
+				
+				
 		}
 	}
 

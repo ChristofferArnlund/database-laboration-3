@@ -1,7 +1,11 @@
 package dbtLab3;
 
+import dbtLab3.tables.User;
+
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * The GUI pane where a new user logs in. Contains a text field where the user
@@ -83,6 +87,19 @@ public class UserLoginPane extends BasicPane {
 		public void actionPerformed(ActionEvent e) {
 			String userId = fields[USER_ID].getText();
 			/* --- insert own code here --- */
+
+			LinkedList<User> users = (LinkedList<User>) db.getUsers();
+            for (User u : users) {
+                if(u.getUsername().equals(userId)) {
+                   // System.out.println("LOGIN CLICKED");
+                        CurrentUser cu =  CurrentUser.instance();
+                    cu.loginAs(userId);
+
+                    break;
+
+                }
+            }
+
 		}
 	}
 }

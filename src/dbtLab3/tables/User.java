@@ -7,6 +7,9 @@ public class User {
 
     private Address adress;
 
+
+
+
     public String getUsername() {
         return username;
     }

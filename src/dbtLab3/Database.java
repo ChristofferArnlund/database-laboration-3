@@ -160,6 +160,46 @@ public class Database {
         }
         return reservations;
     }
+
+/* -TODO -----------------------   IMPLEMENT SEMAPHORE & CHECK FUNCTIONALITY -----------------*/
+    public List<Reservation> makeReservations(String username, Integer show_nr) {
+        List<Reservation> reservations = new LinkedList<>();
+        String query =
+                        "INSERT" +
+                        "INTO   reservations (username,show_nr)"+
+                        "('"+username + "'," + +show_nr +")";
+
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ResultSet rs = ps.executeQuery();
+            System.out.println(rs.getString(""));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservations;
+    }
+
+    /* ----TODO-----------------  UPDATE SHOWS WITH ONE LESS FREE SEAT  */
+    public List<Show> updateShows() {
+        List<Show> shows = new LinkedList<>();
+        String query =
+                        "UPDATE" +
+                        "FROM    shows";
+
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                shows.add(new Show(Integer.parseInt(rs.getString("show_nr")),rs.getString("movie_name"),rs.getString("theater_name"),rs.getString("date"),Integer.parseInt(rs.getString("free_seats"))));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return shows;
+    }
+
+
     public List<Show> getShows() {
         List<Show> shows = new LinkedList<>();
         String query =
