@@ -1,5 +1,7 @@
 package dbtLab3;
 
+import dbtLab3.tables.Movie;
+
 import java.sql.*;
 import java.util.*;
 
@@ -64,27 +66,23 @@ public class Database {
         return conn != null;
     }
 
-    /* ================================== */
-    /* --- insert your own code below --- */
-    /* ===============================*== */
 
-    /*
-    public List<...> ...(...) {
-        List<...> found = new LinkedList<>();
+
+    public List<Movie> getMovies() {
+        List<Movie> movies = new LinkedList<>();
         String query =
-            "SELECT  ...\n" +
-            "FROM    ...\n" +
-            "...\n";
+            "SELECT  *" +
+            "FROM    movies";
         try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, ...);
+            ps.setString(1,"movie_name");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                found.add(new ...(rs));
+                movies.add(new Movie(rs.));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return found;
+        return movies;
     }
     */
 }
