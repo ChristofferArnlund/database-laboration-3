@@ -1,6 +1,6 @@
 package dbtLab3;
 
-import dbtLab3.tables.Movie;
+import dbtLab3.tables.*;
 
 import java.sql.*;
 import java.util.*;
@@ -74,15 +74,108 @@ public class Database {
             "SELECT  *" +
             "FROM    movies";
         try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1,"movie_name");
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                movies.add(new Movie(rs.));
+                movies.add(new Movie(rs.getString(("movie_name"))));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return movies;
     }
-    */
+
+    public List<Theater> getTheaters() {
+        List<Theater> theaters = new LinkedList<>();
+        String query =
+                        "SELECT  *" +
+                        "FROM    theaters";
+
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                theaters.add(new Theater(rs.getString("theater_name"),Integer.parseInt(rs.getString("seats"))));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return theaters;
+    }
+    public List<Address> getAddresses() {
+        List<Address> addresses = new LinkedList<>();
+        String query =
+                "SELECT  *" +
+                        "FROM    addresses";
+
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                addresses.add(new Address(rs.getString("username"),(rs.getString("address"))));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return addresses;
+    }
+    public List<User> getUsers() {
+        List<User> users = new LinkedList<>();
+        String query =
+                        "SELECT  *" +
+                        "FROM    users "+
+                        "JOIN addresses ON users.username=addresses.username";
+
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User u = new User(rs.getString("username"),(rs.getString("telephone")),rs.getString("fullname"));
+                users.add(u);
+                if(rs.getString("address")!=null){
+                    Address a = new Address(rs.getString("username"),rs.getString("address"));
+                    u.setAdress(a);
+                }
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+    public List<Reservation> getReservations() {
+        List<Reservation> reservations = new LinkedList<>();
+        String query =
+                        "SELECT  *" +
+                        "FROM    reservations";
+
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                reservations.add(new Reservation(Integer.parseInt(rs.getString("reservation_nbr")),rs.getString("username"),Integer.parseInt(rs.getString("show_nr"))));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservations;
+    }
+    public List<Show> getShows() {
+        List<Show> shows = new LinkedList<>();
+        String query =
+                        "SELECT  * " +
+                        "FROM    shows";
+
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                shows.add(new Show(Integer.parseInt(rs.getString("show_nr")),rs.getString("movie_name"),rs.getString("theater_name"),rs.getString("date"),Integer.parseInt(rs.getString("free_seats"))));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return shows;
+    }
+
 }

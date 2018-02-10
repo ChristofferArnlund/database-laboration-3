@@ -8,6 +8,10 @@ package dbtLab3;
 public class MovieBooking {
     public static void main(String[] args) {
         Database db = new Database();
+        db.openConnection("movies.sqlite");
+        db.getUsers();
+        db.getReservations();
+        db.getShows();
         new MovieGUI(db);
     }
 }

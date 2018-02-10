@@ -1,6 +1,6 @@
 package dbtLab3.tables;
 
-public class Theather {
+public class Theater {
     public String theather_name;
 
     public String getTheather_name() {
@@ -21,7 +21,7 @@ public class Theather {
 
     public int seats;
 
-    public Theather (String theater_name,Integer seats) {
+    public Theater(String theater_name, Integer seats) {
         this.theather_name=theater_name;
         this.seats=seats;
     }
