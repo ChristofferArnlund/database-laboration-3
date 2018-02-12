@@ -10,6 +10,7 @@ import java.util.*;
  * uses JDBC to connect to a SQLite3 file.
  */
 public class Database {
+    private boolean semaphore;
 
     /**
      * The database connection.
@@ -22,6 +23,7 @@ public class Database {
      */
     public Database() {
         conn = null;
+        semaphore = true;
     }
 
     /**
@@ -162,42 +164,61 @@ public class Database {
     }
 
 /* -TODO -----------------------   IMPLEMENT SEMAPHORE & CHECK FUNCTIONALITY -----------------*/
-    public List<Reservation> makeReservations(String username, Integer show_nr) {
+    public void makeReservations(String username, Integer show_nr) throws SQLException {
+        while(!semaphore){}
+        semaphore = false;
         List<Reservation> reservations = new LinkedList<>();
-        String query =
-                        "INSERT" +
-                        "INTO   reservations (username,show_nr)"+
-                        "('"+username + "'," + +show_nr +")";
+        String insertQuery = "INSERT "
+                + "INTO   reservations (username, show_nr) "
+                + "VALUES"
+                + "('" + username + "',"  + show_nr + ")";
 
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
+        try (PreparedStatement ps = conn.prepareStatement(insertQuery)) {
 
-            ResultSet rs = ps.executeQuery();
-            System.out.println(rs.getString(""));
+            ps.execute();
+            //System.out.println(rs.getString(""));
+
+        } catch (SQLException e) {
+            throw new SQLException("Show fully booked, sorry!");
+        }
+
+        //Update free seats in show
+        String updateQuery =
+                        "UPDATE shows " +
+                        "SET free_seats = free_seats - 1 " +
+                        "WHERE show_nr = " + show_nr;
+
+        try (PreparedStatement ps = conn.prepareStatement(updateQuery)) {
+
+            ps.execute();
+            //System.out.println(rs.getString(""));
+
+        } catch (SQLException e) {
+            throw new SQLException("Show fully booked, sorry!");
+        }
+        semaphore = true;
+    }
+
+    /* ----TODO-----------------  UPDATE SHOWS WITH ONE LESS FREE SEAT
+    public void updateShows(String username, Integer show_nr) {
+        while(!semaphore){}
+        semaphore = false;
+         //Update free seats in show
+        String updateQuery =
+                        "UPDATE shows " +
+                        "SET free_seats = free_seats - 1 " +
+                        "WHERE show_nr = " + show_nr;
+
+        try (PreparedStatement ps = conn.prepareStatement(updateQuery)) {
+
+            ps.execute();
+            //System.out.println(rs.getString(""));
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return reservations;
-    }
-
-    /* ----TODO-----------------  UPDATE SHOWS WITH ONE LESS FREE SEAT  */
-    public List<Show> updateShows() {
-        List<Show> shows = new LinkedList<>();
-        String query =
-                        "UPDATE" +
-                        "FROM    shows";
-
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                shows.add(new Show(Integer.parseInt(rs.getString("show_nr")),rs.getString("movie_name"),rs.getString("theater_name"),rs.getString("date"),Integer.parseInt(rs.getString("free_seats"))));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return shows;
-    }
+        semaphore = true;
+    }*/
 
 
     public List<Show> getShows() {

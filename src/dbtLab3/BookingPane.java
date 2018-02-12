@@ -8,6 +8,7 @@ import javax.swing.event.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.util.LinkedList;
 
 /**
@@ -191,7 +192,10 @@ public class BookingPane extends BasicPane {
 	 */
 	private void fillDateList() {
 		dateListModel.removeAllElements();
-        /* --- insert own code here --- */
+		LinkedList<Movie> movies = (LinkedList<Movie>) db.getMovies();
+		for (Movie mov:movies){
+			nameListModel.addElement(mov.getMovie_name());
+		}
 	}
 
 	/**
@@ -262,20 +266,21 @@ public class BookingPane extends BasicPane {
 
 			shows =  (LinkedList<Show>) db.getShows();
 			for(Show s : shows){
-				if(s.getDate().equals(date)){
-
-					fields[0].setText(s.getMovie_name());
-					fields[1].setText(s.getDate());
-					fields[2].setText(s.getTheater_name());
-					fields[3].setText(Integer.toString(s.getFree_seats()));
-
-
+				if(s.getDate().equals(date) && s.getMovie_name().equals(movieName)){
+					setFields(s);
 				}
 
 			}
 				
 				
 		}
+	}
+
+	private void setFields(Show s) {
+		fields[0].setText(s.getMovie_name());
+		fields[1].setText(s.getDate());
+		fields[2].setText(s.getTheater_name());
+		fields[3].setText(Integer.toString(s.getFree_seats()));
 	}
 
 	/**
@@ -300,7 +305,19 @@ public class BookingPane extends BasicPane {
 			}
 			String movieName = nameList.getSelectedValue();
 			String date = dateList.getSelectedValue();
-			/* --- insert own code here --- */
+			shows =  (LinkedList<Show>) db.getShows();
+			try {
+				for (Show s : shows) {
+					if (s.getDate().equals(date) && s.getMovie_name().equals(movieName)) {
+						db.makeReservations(CurrentUser.instance().getCurrentUserId(), s.getShow_nr());
+						setFields(s);
+						break;
+					}
+				}
+			} catch (SQLException exp) {
+				displayMessage(exp.getMessage());
+				return;
+			}
 		}
 	}
 }
