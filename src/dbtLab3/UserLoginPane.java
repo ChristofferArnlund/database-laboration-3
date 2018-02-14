@@ -92,7 +92,7 @@ public class UserLoginPane extends BasicPane {
             for (User u : users) {
                 if(u.getUsername().equals(userId)) {
                    // System.out.println("LOGIN CLICKED");
-                        CurrentUser cu =  CurrentUser.instance();
+					CurrentUser cu =  CurrentUser.instance();
                     cu.loginAs(userId);
 
                     break;
